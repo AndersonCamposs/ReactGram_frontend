@@ -9,15 +9,31 @@ import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 // REDUX
+import { reset, login } from '../../slices/authSlice';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  const { loading, error } = useSelector((state) => state.auth);
+
+  const dispatch = useDispatch();
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(email, password);
+
+    const user = {
+      email,
+      password,
+    };
+
+    dispatch(login(user));
   };
+
+  // CLEAN ALL AUTH STATES
+  useEffect(() => {
+    dispatch(reset());
+  }, [dispatch]);
 
   return (
     <div id="login">
@@ -31,7 +47,9 @@ const Login = () => {
           onChange={(e) => setPassword(e.target.value)}
           value={password || ''}
         />
-        <input type="submit" value="Entrar" />
+        {!loading && <input type="submit" value="Entrar" />}
+        {loading && <input type="submit" value="Aguarde..." />}
+        {error && <Message msg={error} type="error" />}
       </form>
       <p>
         Não tem uma conta? <Link to="/register">Clique aqui e registre-se.</Link>
