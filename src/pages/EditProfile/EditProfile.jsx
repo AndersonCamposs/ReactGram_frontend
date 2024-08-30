@@ -21,7 +21,7 @@ const EditProfile = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [profileImage, setProfileImage] = useState('');
+  const [imageProfile, setImageProfile] = useState('');
   const [bio, setBio] = useState('');
   const [previewImage, setPreviewImage] = useState('');
 
@@ -43,11 +43,27 @@ const EditProfile = () => {
     e.preventDefault();
   };
 
+  const handleFile = (e) => {
+    // IMAGE PREVIEW
+    const image = e.target.files[0];
+
+    setPreviewImage(image);
+
+    // UPDATE IMAGE STATE
+    setImageProfile(image);
+  };
+
   return (
     <div id="edit-profile">
       <h2>Edite seus dados</h2>
       <p className="subtitle">Adicione uma imagem de perfil e conte mais sobre você...</p>
-      {/* PREVIEW DA IMAGEM */}
+      {(user.profileImage || previewImage) && (
+        <img
+          className="profile-image"
+          src={previewImage ? URL.createObjectURL(previewImage) : `${uploads}/users/${user.profileImage}`}
+          alt={user.name}
+        />
+      )}
       <form onSubmit={(e) => handleSubmit(e)}>
         <input type="text" placeholder="Nome" onChange={(e) => setName(e.target.value)} value={name || ''} />
         <input
@@ -59,7 +75,7 @@ const EditProfile = () => {
         />
         <label>
           <span>Imagem do perfil:</span>
-          <input type="file" />
+          <input type="file" onChange={(e) => handleFile(e)} />
         </label>
         <label>
           <span>Biografia:</span>
