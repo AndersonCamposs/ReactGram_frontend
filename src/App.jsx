@@ -11,6 +11,7 @@ import Register from './pages/Auth/Register';
 // COMPONENTS
 import NavBar from './components/NavBar';
 import Footer from './components/Footer';
+import EditProfile from './pages/EditProfile/EditProfile';
 
 // HOOKS
 import { useAuth } from './hooks/useAuth';
@@ -29,6 +30,7 @@ function App() {
         <div className="container">
           <Routes>
             <Route path="/" element={auth ? <Home /> : <Navigate to="/login" />} />
+            <Route path="/profile" element={auth ? <EditProfile /> : <Navigate to="/login" />} />
             <Route path="/login" element={!auth ? <Login /> : <Navigate to="/" />} />
             <Route path="/register" element={!auth ? <Register /> : <Navigate to="/" />} />
           </Routes>
