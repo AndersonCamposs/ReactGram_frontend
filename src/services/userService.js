@@ -19,7 +19,7 @@ const profile = async (data, token) => {
 const updateProfile = async (data, token) => {
   const config = requestConfig('PUT', data, token);
   try {
-    const res = fetch(`${api}/users`, config)
+    const res = await fetch(`${api}/users`, config)
       .then((res) => res.json())
       .catch((error) => error);
 
