@@ -15,7 +15,7 @@ export const requestConfig = (method, data, token = null, image = null) => {
       method,
       headers: {},
     };
-  } else if (method === 'PUT' && typeof data === 'object') {
+  } else if (typeof data === 'object') {
     // CONDIÇÃO QUE VERIFICA SE OS DADOS ENVIADOS SÃO DO TIPO 'FormData'
     config = {
       method,
