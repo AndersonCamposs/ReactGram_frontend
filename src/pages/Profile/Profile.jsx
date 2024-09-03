@@ -13,8 +13,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
 
 // REDUX
-import { getUserDetails, resetMessage } from '../../slices/userSlice';
-import { publishPhoto } from '../../slices/photoSlice';
+import { getUserDetails } from '../../slices/userSlice';
+import { publishPhoto, resetMessage, getUserPhotos } from '../../slices/photoSlice';
 
 const Profile = () => {
   const { id } = useParams();
@@ -32,15 +32,20 @@ const Profile = () => {
 
   const [title, setTitle] = useState('');
   const [image, setImage] = useState('');
+  const [trigger, setTrigger] = useState(false);
 
   // NEW FORM AND EDIT FORM REFS
   const newPhotoForm = useRef();
   const editPhotoForm = useRef();
 
-  // LOAD USER DATA
+  // LOAD USER DATA AND PREVENT FAIL INTO COMPONENT RE-RENDER
   useEffect(() => {
-    dispatch(getUserDetails(id));
-  }, [dispatch, id]);
+    const fetchData = async () => {
+      await dispatch(getUserDetails(id));
+      await dispatch(getUserPhotos(id));
+    };
+    fetchData();
+  }, [dispatch, id, trigger]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -59,14 +64,13 @@ const Profile = () => {
     await dispatch(publishPhoto(formData));
 
     setTitle('');
-
     setTimeout(() => {
       dispatch(resetMessage());
-    }, 3000);
+    }, 2000);
+    setTrigger(!trigger);
   };
 
   const handleFile = (e) => {
-    // IMAGE PREVIEW
     const image = e.target.files[0];
 
     setImage(image);
@@ -108,6 +112,32 @@ const Profile = () => {
               {errorPhoto && <Message msg={errorPhoto} type="error" />}
               {messagePhoto && <Message msg={messagePhoto} type="success" />}
             </form>
+          </div>
+          <div className="user-photos">
+            <h2>Fotos postadas:</h2>
+            <div className="photos-container">
+              {photos &&
+                photos.photos &&
+                photos.photos.map((photo) => (
+                  <div className="photo" key={photo._id}>
+                    {photo.image && <img src={`${uploads}/photos/${photo.image}`} alt={photo.title} />}
+                    {id === userAuth._id ? (
+                      <div className="actions">
+                        <Link to={`/photos/${photo._id}`}>
+                          <BsFillEyeFill />
+                        </Link>
+                        <BsPencilFill />
+                        <BsXLg />
+                      </div>
+                    ) : (
+                      <Link className="btn" to={`/photos/${photo._id}`}>
+                        Ver
+                      </Link>
+                    )}
+                  </div>
+                ))}
+              {photos.photos && photos.photos.length === 0 && <p>Ainda não há fotos publicadas.</p>}
+            </div>
           </div>
         </>
       )}
