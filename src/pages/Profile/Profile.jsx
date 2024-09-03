@@ -165,14 +165,14 @@ const Profile = () => {
           <div className="edit-photo hide" ref={editPhotoForm}>
             <p>Editando:</p>
             {editImage && <img src={`${uploads}/photos/${editImage}`} alt={editTitle} />}
-            <form onSubmit={(e) => handleUpdate(e)}>
+            <form>
               <input
                 type="text"
                 placeholder="Insira o novo título"
                 onChange={(e) => setEditTitle(e.target.value)}
                 value={editTitle || ''}
               />
-              <input type="submit" value="Atualizar" />
+              <input type="submit" value="Atualizar" onClick={(e) => handleUpdate(e)} />
               <button className="cancel-btn" onClick={(e) => handleCancelEdit(e)}>
                 Cancelar Edição
               </button>
