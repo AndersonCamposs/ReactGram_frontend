@@ -14,7 +14,7 @@ import { useParams } from 'react-router-dom';
 
 // REDUX
 import { getUserDetails } from '../../slices/userSlice';
-import { publishPhoto, resetMessage, getUserPhotos } from '../../slices/photoSlice';
+import { publishPhoto, resetMessage, getUserPhotos, deletePhoto } from '../../slices/photoSlice';
 
 const Profile = () => {
   const { id } = useParams();
@@ -47,8 +47,16 @@ const Profile = () => {
     fetchData();
   }, [dispatch, id, trigger]);
 
+  const resetComponentMessage = () => {
+    setTimeout(() => {
+      dispatch(resetMessage());
+    }, 2000);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    setTrigger(false);
 
     const photoData = {
       title,
@@ -64,9 +72,16 @@ const Profile = () => {
     await dispatch(publishPhoto(formData));
 
     setTitle('');
-    setTimeout(() => {
-      dispatch(resetMessage());
-    }, 2000);
+
+    setTrigger(!trigger);
+  };
+
+  // DELETE A PHOTO
+  const handleDelete = async (photoId) => {
+    setTrigger(false);
+    await dispatch(deletePhoto(photoId));
+
+    resetComponentMessage();
     setTrigger(!trigger);
   };
 
@@ -127,7 +142,11 @@ const Profile = () => {
                           <BsFillEyeFill />
                         </Link>
                         <BsPencilFill />
-                        <BsXLg />
+                        <BsXLg
+                          onClick={() => {
+                            handleDelete(photo._id);
+                          }}
+                        />
                       </div>
                     ) : (
                       <Link className="btn" to={`/photos/${photo._id}`}>
