@@ -17,9 +17,24 @@ const profile = async (data, token) => {
 
 // UPDATE USER DETAILS
 const updateProfile = async (data, token) => {
-  const config = requestConfig('PUT', data, token);
+  const config = requestConfig('PUT', data, token, true);
   try {
     const res = await fetch(`${api}/users`, config)
+      .then((res) => res.json())
+      .catch((error) => error);
+
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// GET USER DETAILS
+const getUserDetails = async (id) => {
+  const config = requestConfig('GET');
+
+  try {
+    const res = await fetch(`${api}/users/${id}`, config)
       .then((res) => res.json())
       .catch((error) => error);
 
@@ -32,6 +47,7 @@ const updateProfile = async (data, token) => {
 const userService = {
   profile,
   updateProfile,
+  getUserDetails,
 };
 
 export default userService;
