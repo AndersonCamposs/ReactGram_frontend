@@ -98,7 +98,8 @@ export const commentPhoto = createAsyncThunk('photo/comment', async (commentData
 });
 
 // GET ALL PHOTOS
-export const getPhotos = createAsyncThunk('photos/getphotos', async ({}, thunkAPI) => {
+// _ como primeiro argumento significa que ele é dispensado
+export const getPhotos = createAsyncThunk('photos/getphotos', async (_, thunkAPI) => {
   const token = thunkAPI.getState().auth.user.token;
 
   const data = await photoService.getPhotos(token);

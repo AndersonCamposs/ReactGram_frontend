@@ -89,7 +89,7 @@ export const Photo = () => {
               <div className="comment" key={index}>
                 <div className="author">
                   {comment.userImage && <img src={`${uploads}/users/${comment.userImage}`} alt={comment.userName} />}
-                  <Link to={`/users/${comment.userId}`}>
+                  <Link to={`users/${comment.userId}`}>
                     <p>{comment.userName}</p>
                   </Link>
                 </div>
