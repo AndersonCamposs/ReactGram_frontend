@@ -48,10 +48,10 @@ export const deletePhoto = createAsyncThunk('photo/delete', async (id, thunkAPI)
 });
 
 // UPDATE A PHOTO
-export const updatePhoto = createAsyncThunk('phot/upload', async (photoData, thunkAPI) => {
+export const updatePhoto = createAsyncThunk('phot/upload', async (commentData, thunkAPI) => {
   const token = thunkAPI.getState().auth.user.token;
 
-  const data = await photoService.updatePhoto({ title: photoData.title }, photoData.id, token);
+  const data = await photoService.updatePhoto({ title: commentData.title }, commentData.id, token);
 
   if (data.errors) {
     return thunkAPI.rejectWithValue(data.errors[0]);
@@ -65,6 +65,34 @@ export const getPhoto = createAsyncThunk('photos/getphoto', async (id, thunkAPI)
   const token = thunkAPI.getState().auth.user.token;
 
   const data = await photoService.getPhoto(id, token);
+
+  return data;
+});
+
+// LIKE A PHOTO
+export const likePhoto = createAsyncThunk('photos/like', async (id, thunkAPI) => {
+  const token = thunkAPI.getState().auth.user.token;
+
+  const data = await photoService.likePhoto(id, token);
+
+  // CHECK FOR ERRORS
+  if (data.errors) {
+    return thunkAPI.rejectWithValue(data.errors[0]);
+  }
+
+  return data;
+});
+
+// ADD A COMMENT
+export const commentPhoto = createAsyncThunk('photo/comment', async (commentData, thunkAPI) => {
+  const token = thunkAPI.getState().auth.user.token;
+
+  const data = await photoService.commentPhoto({ comment: commentData.comment }, commentData.id, token);
+
+  // CHECK FOR ERRORS
+  if (data.errors) {
+    return thunkAPI.rejectWithValue(data.errors[0]);
+  }
 
   return data;
 });
@@ -163,6 +191,44 @@ export const photoSlice = createSlice({
         state.success = true;
         state.error = null;
         state.photo = action.payload;
+      })
+      .addCase(likePhoto.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(likePhoto.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = true;
+        state.error = null;
+
+        if (action.payload.likes) {
+          state.payload.likes.push(action.payload.userId);
+        }
+
+        if (!Array.isArray(state.photos)) {
+          state.photos = [];
+        }
+        state.photos.map((photo) => {
+          if (photo._id === action.payload.photo.photoId) {
+            return photo.likes.push(action.payload.userId);
+          }
+          return photo;
+        });
+
+        state.message = action.payload.message;
+      })
+      .addCase(commentPhoto.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(commentPhoto.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = true;
+        state.error = null;
+
+        state.photo.comments.push(action.payload.comment);
+
+        state.message = action.payload.message;
       });
   },
 });
