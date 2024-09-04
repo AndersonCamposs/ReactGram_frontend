@@ -5,7 +5,9 @@ export const useResetComponentMessage = (dispatch, setTrigger) => {
   return () => {
     setTimeout(() => {
       dispatch(resetMessage());
-      setTrigger((prevState) => !prevState);
+      if (setTrigger) {
+        setTrigger((prevState) => !prevState);
+      }
     }, 2000);
   };
 };

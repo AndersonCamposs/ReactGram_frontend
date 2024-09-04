@@ -44,7 +44,7 @@ const Home = () => {
         photos.map((photo) => (
           <div key={photo._id}>
             <PhotoItem photo={photo} />
-            <LikeContainer photo={photo} user={authUser} handleLike={handleLike} />
+            <LikeContainer photo={photo} user={authUser} handleLike={() => handleLike(photo)} />
             <Link className="btn" to={`/photos/${photo._id}`}>
               Ver mais
             </Link>
